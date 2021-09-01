@@ -10,7 +10,7 @@ int main()
 {
     Display display;
     std::vector<Vertex> spokes;
-    std::vector<Vertex> circle[3];
+    std::vector<Vertex> circle[4];
     std::vector<Vertex> sweep;
 
     float theta = 0.0;
@@ -26,8 +26,8 @@ int main()
         Vertex radiusVertex;
         spokes.push_back(originVertex);
         theta = 2.0f * 3.1415926f * float(i) / float(360.0);//get the current angle
-        x = (DEFAULT_DISPLAY_WIDTH/2) * cosf(theta);//calculate the x component
-        y = (DEFAULT_DISPLAY_WIDTH/2) * sinf(theta);//calculate the y component
+        x = 512.0 * cosf(theta);//calculate the x component
+        y = 512.0 * sinf(theta);//calculate the y component
 
         radiusVertex.SetPos(glm::vec3(x,y,0.0f));
         spokes.push_back(radiusVertex);
@@ -40,9 +40,9 @@ int main()
     x = 0.0f;
     y = 0.0f;
 
-    Mesh *circles[3];
+    Mesh *circles[4];
 
-    for (uint16_t ii = 0; ii < 3; ii++)
+    for (uint16_t ii = 0; ii < 4; ii++)
     {
         for (uint16_t i = 0; i < 360; i++)
         {
@@ -61,6 +61,9 @@ int main()
                 case 2:
                     r = 384.0;
                     break;
+                case 3:
+                    r = 512.0;
+                    break;
             }
 
 
@@ -77,8 +80,8 @@ int main()
     Vertex sweepVertex;
     sweep.push_back(sweepOriginVertex);
     theta = 2.0f * 3.1415926f * float(angle) / float(360.0);//get the current angle
-    x = (DEFAULT_DISPLAY_WIDTH/2) * cosf(theta);//calculate the x component
-    y = (DEFAULT_DISPLAY_WIDTH/2) * sinf(theta);//calculate the y component
+    x = 512.0 * cosf(theta);//calculate the x component
+    y = 512.0 * sinf(theta);//calculate the y component
     sweepVertex.SetPos(glm::vec3(x,y,0.0f));
     sweep.push_back(sweepVertex);
 
@@ -88,26 +91,34 @@ int main()
     while (!display.IsClosed())
     {
         display.clear();
+        //# Draws spokes
         mesh.Draw(GL_LINES);
-        for (uint16_t ii = 0; ii < 3; ii++)
+
+        //# Draws Range Rings
+        for (uint16_t ii = 0; ii < 4; ii++)
             circles[ii]->Draw(GL_LINE_LOOP);
 
+        //# Draw Sweeper
         Sweeper.Draw(GL_LINES);
         shader.Bind();
         display.Update();
 
-        if (angle - (0.0878*2) < 60.0)
-            angle  = 120.0;
+        //# Update Sweeper Data before draw everything again
+//        if (angle - (0.0878*2) < 60.0)
+//            angle  = 120.0;
 
-        angle-= (0.0878 * 2);
-//        angle--;
+        if (angle - 1 < 0.0)
+            angle  = 360.0;
+
+//        angle-= (0.0878 * 2);
+        angle--;
         theta = 2.0f * 3.1415926f * float(angle) / float(360.0);//get the current angle
-        x = (DEFAULT_DISPLAY_WIDTH/2) * cosf(theta);//calculate the x component
-        y = (DEFAULT_DISPLAY_WIDTH/2) * sinf(theta);//calculate the y component
+        x = 512.0 * cosf(theta);//calculate the x component
+        y = 512.0 * sinf(theta);//calculate the y component
 
-        sweep.push_back(sweepOriginVertex);
-        sweepVertex.SetPos(glm::vec3(x,y,0.0f));
-        sweep.push_back(sweepVertex);
+//        sweep.push_back(sweepOriginVertex);
+        sweep[1].SetPos(glm::vec3(x,y,0.0f));
+//        sweep.push_back(sweepVertex);
         Sweeper.Update(sweep, (uint32_t)sweep.size(), false);
 
     }

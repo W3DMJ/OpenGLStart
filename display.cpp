@@ -51,7 +51,7 @@ Display::Display()
     if (status != GLEW_OK)
         std::cerr << "Glew failed to initialize" << std::endl;
 
-    glOrtho(-(DEFAULT_DISPLAY_WIDTH/2.0), (DEFAULT_DISPLAY_WIDTH/2.0), -(DEFAULT_DISPLAY_HEIGHT/2.0), (DEFAULT_DISPLAY_HEIGHT/2.0), 0.0f, 1.0f);
+    glOrtho(-(DEFAULT_DISPLAY_WIDTH), (DEFAULT_DISPLAY_WIDTH), -(DEFAULT_DISPLAY_HEIGHT), (DEFAULT_DISPLAY_HEIGHT), 0.0f, 1.0f);
 }
 
 Display::~Display()
